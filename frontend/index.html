@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dining Philosophers Visualizer</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Global SVG defs (arrowhead marker) shared by every redrawn table SVG -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <marker id="arrowhead-wait" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" class="arrow-head-wait" />
+    </marker>
+    <marker id="arrowhead-deadlock" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0,0 L9,4.5 L0,9 Z" class="arrow-head-deadlock" />
+    </marker>
+  </defs>
+</svg>
+
+<header>
+  <h1>Dining Philosophers Problem Visualizer</h1>
+  <div class="status-bar">
+    <span id="status-badge" class="badge idle">IDLE</span>
+    <span id="strategy-badge" class="badge strategy">Strategy: —</span>
+    <span id="event-count" class="badge">Events: 0</span>
+  </div>
+</header>
+
+<div id="deadlock-banner" class="deadlock-banner hidden">
+  <strong>⚠ DEADLOCK DETECTED</strong> — circular wait:
+  <span id="deadlock-cycle"></span>
+  <div class="deadlock-sub">Mutual exclusion + hold-and-wait + no preemption + circular wait are all present. See explanation panel.</div>
+</div>
+
+<main>
+  <section class="panel table-panel">
+    <div id="table-container"><p class="empty-msg">Click <b>Start</b> to begin the simulation.</p></div>
+    <div id="legend" class="legend">
+      <span><i class="dot thinking"></i>Thinking</span>
+      <span><i class="dot hungry"></i>Hungry</span>
+      <span><i class="dot waiting"></i>Waiting</span>
+      <span><i class="dot eating"></i>Eating</span>
+      <span><i class="dot fork-free"></i>Fork free</span>
+    </div>
+    <div id="strategy-explanation" class="explanation"></div>
+  </section>
+
+  <section class="panel log-panel">
+    <h2>Event Log</h2>
+    <div id="event-log"></div>
+  </section>
+</main>
+
+<section class="panel controls-panel">
+  <h2>Controls</h2>
+  <div class="controls-row">
+    <button id="btn-start" class="btn primary">Start</button>
+    <button id="btn-pause" class="btn">Pause</button>
+    <button id="btn-resume" class="btn">Resume</button>
+    <button id="btn-reset" class="btn danger">Reset</button>
+    <button id="btn-step" class="btn">Step ▸</button>
+    <button id="btn-trigger-deadlock" class="btn warn">Force Deadlock Demo</button>
+  </div>
+  <div class="controls-row">
+    <label>Strategy
+      <select id="sel-strategy">
+        <option value="naive">Naive (Unsafe)</option>
+        <option value="ordered">Resource Ordering</option>
+        <option value="waiter">Waiter / Semaphore</option>
+      </select>
+    </label>
+    <label>Philosophers (N)
+      <select id="sel-count">
+        <option>3</option><option>4</option><option selected>5</option>
+        <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+      </select>
+    </label>
+    <label>Speed <input type="range" id="rng-speed" min="0.25" max="4" step="0.25" value="1">
+      <span id="speed-val">1.00x</span>
+    </label>
+    <label class="checkbox-label">
+      <input type="checkbox" id="chk-manual"> Manual step mode
+    </label>
+  </div>
+  <p class="hint">Tip: for manual stepping, set speed to 4x so think/eat pauses stay short between steps.</p>
+</section>
+
+<section class="panel metrics-panel">
+  <h2>Metrics <span class="sub">(from this run's actual data)</span></h2>
+  <div id="metrics-grid" class="metrics-grid"></div>
+</section>
+
+<section class="panel comparison-panel">
+  <h2>Strategy Comparison <span class="sub">(completed runs this session)</span></h2>
+  <table id="comparison-table">
+    <thead>
+      <tr>
+        <th>Strategy</th><th>N</th><th>Deadlock?</th><th>Meals</th>
+        <th>Avg Wait</th><th>Max Wait</th><th>Blocked</th><th>Duration</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <p class="empty-msg" id="comparison-empty">Run a strategy, then Reset, to record a comparison row.</p>
+</section>
+
+<footer>
+  <p>All values shown are measured live from running Python threads — nothing here is animated or pre-scripted.</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
