@@ -55,7 +55,10 @@ function renderTable(state) {
     philPos.push({ x: cx + philDist * Math.cos(a), y: cy + philDist * Math.sin(a) });
   }
   for (let i = 0; i < n; i++) {
-    const a = -Math.PI / 2 + (i + 0.5) * (2 * Math.PI / n);
+    // Fork i is Philosopher i's LEFT fork and Philosopher (i-1)'s RIGHT fork
+    // (backend: left = i, right = (i+1) % N) -- so Fork i sits between
+    // Philosopher (i-1) and Philosopher i, i.e. at slot (i - 0.5), not (i + 0.5).
+    const a = -Math.PI / 2 + (i - 0.5) * (2 * Math.PI / n);
     forkPos.push({ x: cx + forkDist * Math.cos(a), y: cy + forkDist * Math.sin(a) });
   }
 
